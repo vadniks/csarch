@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            let a, b
+            function c() {
+                b = document.querySelector('span')
+                a = new WebSocket('ws://localhost:8080/ws')
+                a.onmessage = e => i(e.data)
+            }
+            function d(f) { a.send(f) }
+            function e() { a.close(1000, null) }
+            function g() {
+                const h = new XMLHttpRequest()
+                h.open('GET', '/a', false)
+                h.send(null)
+                i(h.responseText)
+            }
+            function i(j) { b.textContent = j }
+        </script>
+    </head>
+    <body>
+        <button onclick="c()">open</button><br/>
+        <button onclick="d('a')">a</button><br/>
+        <button onclick="d('b')">b</button><br/>
+        <button onclick="g()">c</button><br/>
+        <button onclick="e()">close</button><br/>
+        <span></span>
+    </body>
+</html>
