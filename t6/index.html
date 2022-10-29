@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>a</title>
+        <script>
+            function getCars() {
+                const query = `{
+                  cars {
+                    id
+                    title
+                    brand {
+                      id
+                      name
+                    }
+                    price
+                    age
+                  }
+                }`
+                
+                fetch('/g', {
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                }).then(response => response.json()).then(j => {
+                    const container = clearDiv()
+                    for (const i of j.data.cars) {
+                        const paragraph = document.createElement('p')
+                        paragraph.textContent = i.id + ' ' + i.title + ` {${i.brand.id} ${i.brand.name}} ` + i.price + ' ' + i.age
+                        container.appendChild(paragraph)
+                    }
+                })
+            }
+            
+            function getBrands() {
+                const query = `{
+                  brands {
+                    id
+                    name
+                  }
+                }`
+
+                fetch('/g', {
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                }).then(response => response.json()).then(j => {
+                    const container = clearDiv()
+                    for (const i of j.data.brands) {
+                        const paragraph = document.createElement('p')
+                        paragraph.textContent = i.id + ' ' + i.name
+                        container.appendChild(paragraph)
+                    }
+                })
+            }
+            
+            function addCar() {
+                const inputs = document.querySelectorAll('#d > #b > input')
+                const query = `mutation {
+                  addCar(
+                    id: ${parseInt(inputs[0].value)},
+                    title: "${inputs[1].value}",
+                    brandId: ${parseInt(inputs[2].value)},
+                    price: ${parseInt(inputs[3].value)},
+                    age: ${parseInt(inputs[4].value)}
+                  ) {
+                    id,
+                    title,
+                    brand {
+                      id
+                      name
+                    }
+                    price,
+                    age
+                  }
+                }`
+
+                fetch('/g', {
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                }).then(response => response.json()).then(i => {
+                    const data = i.data.addCar, container = clearDiv(), paragraph = document.createElement('p')
+                    paragraph.textContent = data.id + ' ' + data.title + ` {${data.brand.id} ${data.brand.name}} ` + data.price + ' ' + data.age
+                    container.appendChild(paragraph)
+                })
+            }
+            
+            function clearDiv() { const div = document.getElementById('a'); div.innerHTML = ''; return div }
+            
+            function addBrand() {
+                const inputs = document.querySelectorAll('#d > #c > input')
+                const query = `mutation {
+                  addBrand(id: ${parseInt(inputs[0].value)}, name: "${inputs[1].value}") {
+                    id
+                    name
+                  }
+                }`
+
+                fetch('/g', {
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                }).then(s => s.json()).then(i => {
+                    const data = i.data.addBrand, container = clearDiv(), paragraph = document.createElement('p')
+                    paragraph.textContent = data.id + ' ' + data.name
+                    container.appendChild(paragraph)
+                })
+            }
+        </script>
+    </head>
+    <body style="
+        display: flex;
+        flex-direction: row;
+    ">
+        <div style="padding: 5px">
+            <button onclick="getCars()">getCars</button><br/>
+            <button onclick="getBrands()">getBrands</button><br/>
+            <button onclick="addCar()">addCar</button><br/>
+            <button onclick="addBrand()">addBrand</button><br/>
+        </div>
+        
+        <div id="d" style="padding: 5px">
+            <div id="b">
+                <span>Car:</span><br/>
+                <input type="number" placeholder="id"><br/>
+                <input type="text" placeholder="title"><br/>
+                <input type="text" placeholder="brand"><br/>
+                <input type="text" placeholder="price"><br/>
+                <input type="text" placeholder="age">
+            </div>
+            <div id="c">
+                <span>Brand:</span><br/>
+                <input type="number" placeholder="id"><br/>
+                <input type="text" placeholder="name">
+            </div>
+        </div>
+        
+        <div id="a" style="padding: 5px"></div>
+    </body>
+</html>

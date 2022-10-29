@@ -2,8 +2,8 @@
 const exp = require('express')
 const app = exp()
 const { graphqlHTTP } = require('express-graphql')
-const sch = require('./sch')
+const schema = require('./schema')
 
-app.use('/g', graphqlHTTP({ schema: sch, graphiql: true }))
-app.get('/', (q, s) => s.sendFile(__dirname + '/dx.html'))
+app.use('/g', graphqlHTTP({ schema: schema, graphiql: true }))
+app.get('/', (_, response) => response.sendFile(__dirname + '/index.html'))
 app.listen(1234)

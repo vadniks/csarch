@@ -1,6 +1,5 @@
 package a.plugins
 
-import a.gt
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
@@ -19,8 +18,8 @@ fun Application.configureSockets() {
     routing { webSocket("/ws") {
         for (f in incoming) if (f is Frame.Text)
             when (f.readText()) {
-                "a" -> gt("a") { runBlocking { outgoing.send(Frame.Text(it)) } }
-                "b" -> gt("b") { runBlocking { outgoing.send(Frame.Text(it)) } }
+                "a" -> a.get("a") { runBlocking { outgoing.send(Frame.Text(it)) } }
+                "b" -> a.get("b") { runBlocking { outgoing.send(Frame.Text(it)) } }
                 else -> close(CloseReason(CloseReason.Codes.NORMAL, "close"))
             }
     } }

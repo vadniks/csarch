@@ -1,30 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <title>Client</title>
         <script>
-            let a, b
-            function c() {
-                b = document.querySelector('span')
-                a = new WebSocket('ws://localhost:8080/ws')
-                a.onmessage = e => i(e.data)
+            let webSocket, span
+            function openConnection() {
+                span = document.querySelector('span')
+                webSocket = new WebSocket('ws://localhost:8080/ws')
+                webSocket.onmessage = message => spanText(message.data)
             }
-            function d(f) { a.send(f) }
-            function e() { a.close(1000, null) }
-            function g() {
-                const h = new XMLHttpRequest()
-                h.open('GET', '/a', false)
-                h.send(null)
-                i(h.responseText)
+            function getChar(which) { webSocket.send(which) }
+            function closeConnection() { webSocket.close(1000, null) }
+            function getCharSync() {
+                const request = new XMLHttpRequest()
+                request.open('GET', '/a', false)
+                request.send(null)
+                spanText(request.responseText)
             }
-            function i(j) { b.textContent = j }
+            function spanText(text) { span.textContent = text }
         </script>
     </head>
     <body>
-        <button onclick="c()">open</button><br/>
-        <button onclick="d('a')">a</button><br/>
-        <button onclick="d('b')">b</button><br/>
-        <button onclick="g()">c</button><br/>
-        <button onclick="e()">close</button><br/>
+        <button onclick="openConnection()">open connection</button><br/>
+        <button onclick="getChar('a')">get a</button><br/>
+        <button onclick="getChar('b')">get b</button><br/>
+        <button onclick="getCharSync()">get c</button><br/>
+        <button onclick="closeConnection()">close connection</button><br/>
         <span></span>
     </body>
 </html>

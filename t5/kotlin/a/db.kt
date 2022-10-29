@@ -1,26 +1,23 @@
 package a
 
-import kotlinx.coroutines.Dispatchers
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
-val db by lazy { Database.connect("jdbc:sqlite:file:db.db", "org.sqlite.JDBC") }
+val db by lazy { Database.connect("jdbc:sqlite:file:db2.db", "org.sqlite.JDBC") }
 
-object a : IntIdTable() { val a = varchar("a", 10) }
+object Table : IntIdTable() { val char = varchar("char", 10) }
 
-fun gt(c: String, b: (String) -> Unit) = transaction(db) { b(a.select { a.a match c }.single()[a.a]) }
+fun get(which: String, action: (String) -> Unit) = transaction(db) { action(Table.select { Table.char match which }.single()[Table.char]) }
 
-fun cr() = transaction(db) {
-    SchemaUtils.create(a)
-    a.insert { it[a] = "a" }
-    a.insert { it[a] = "b" }
-    a.insert { it[a] = "c" }
+@TestOnly @Suppress("unused")
+fun create() = transaction(db) {
+    SchemaUtils.create(Table)
+    Table.insert { it[char] = "a" }
+    Table.insert { it[char] = "b" }
+    Table.insert { it[char] = "c" }
 }
-
-suspend fun <T> q(block: suspend () -> T): T =
-    newSuspendedTransaction(Dispatchers.IO) { block() }

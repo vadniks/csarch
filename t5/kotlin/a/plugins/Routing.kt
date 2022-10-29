@@ -1,6 +1,5 @@
 package a.plugins
 
-import a.gt
 import io.ktor.server.routing.*
 import io.ktor.server.http.content.*
 import io.ktor.server.application.*
@@ -9,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 
 fun Application.configureRouting() { routing {
     get("/a") {
-        gt("c") { runBlocking { call.respondText(it) } }
+        a.get("c") { runBlocking { call.respondText(it) } }
     }
     static {
         resource("/", "static/index.html")

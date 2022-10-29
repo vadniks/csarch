@@ -17,46 +17,46 @@ import javax.swing.JTextField
 import kotlin.random.Random
 
 fun main() {
-    val n = Random.nextInt().toString()
-    val s = Socket("localhost", 5000)
-    val w = PrintWriter(s.getOutputStream())
-    val r = BufferedReader(InputStreamReader(s.getInputStream()))
-    val p = JPanel()
+    val name = Random.nextInt().toString()
+    val socket = Socket("localhost", 5000)
+    val writer = PrintWriter(socket.getOutputStream())
+    val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
+    val panel = JPanel()
 
-    val t = JTextField()
-    t.preferredSize = Dimension(100, 25)
-    p.add(t)
+    val field = JTextField()
+    field.preferredSize = Dimension(100, 25)
+    panel.add(field)
 
-    val b = JButton("Send")
-    b.addActionListener {
-        w.println("$n :: " + t.text)
-        w.flush()
-        t.text = ""
+    val button = JButton("Send")
+    button.addActionListener {
+        writer.println("$name :: " + field.text)
+        writer.flush()
+        field.text = ""
     }
-    p.add(b)
+    panel.add(button)
 
-    val a = JTextArea().apply {
+    val text = JTextArea().apply {
         preferredSize = Dimension(200, 500)
         isEnabled = false
         lineWrap = true
         disabledTextColor = Color.BLACK
     }
-    Thread { while (true) if (r.ready()) {
-        val c = r.readLine()
-        a.append(c)
-        a.append("\n")
-        println(c)
+    Thread { while (true) if (reader.ready()) {
+        val line = reader.readLine()
+        text.append(line)
+        text.append("\n")
+        println(line)
     } }.start()
-    p.add(a)
+    panel.add(text)
 
-    val f = JFrame(n).apply {
-        add(p)
+    val frame = JFrame(name).apply {
+        add(panel)
         pack()
         defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         setLocationRelativeTo(null)
     }
-    f.addWindowListener(object : WindowListener {
-        override fun windowClosed(p0: WindowEvent?) { w.close(); s.close() }
+    frame.addWindowListener(object : WindowListener {
+        override fun windowClosed(p0: WindowEvent?) { writer.close(); socket.close() }
         override fun windowOpened(p0: WindowEvent?) {}
         override fun windowClosing(p0: WindowEvent?) {}
         override fun windowIconified(p0: WindowEvent?) {}
@@ -64,5 +64,5 @@ fun main() {
         override fun windowActivated(p0: WindowEvent?) {}
         override fun windowDeactivated(p0: WindowEvent?) {}
     })
-    EventQueue.invokeLater { f.isVisible = true }
+    EventQueue.invokeLater { frame.isVisible = true }
 }

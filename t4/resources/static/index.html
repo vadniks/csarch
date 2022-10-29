@@ -4,46 +4,47 @@
     <head>
         <meta charset="UTF-8">
         <title>a</title>
-        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+        <script src="sockjs.min.js"></script>
         <script src="stomp.js"></script>
         <script>
-            const en = '/in', de = '/webs/ot', ds = '/webs/in', fr = (Math.random() * 100).toString()
-            let aa = false, bb, cc
+            const endpoint = '/in', destinationOut = '/webs/ot', destinationIn = '/webs/in',
+                name = (Math.random() * 100).toString()
+            let flag = false, stomp, buttons
 
-            function a() {
-                if (!cc) cc = document.querySelectorAll('button')
-                if (!(aa = !aa)) { b(); return }
-                const a = new SockJS(en)
-                bb = Stomp.over(a)
-                bb.connect({}, _ => {
-                    d('disconnect')
-                    bb.subscribe(de, $b => c(JSON.parse($b.body)))
+            function connect() {
+                if (!buttons) buttons = document.querySelectorAll('button')
+                if (!(flag = !flag)) { onLoad(); return }
+                const sockJS = new SockJS(endpoint)
+                stomp = Stomp.over(sockJS)
+                stomp.connect({}, _ => {
+                    buttonText('disconnect')
+                    stomp.subscribe(destinationOut, response => addMessage(JSON.parse(response.body)))
                 })
             }
 
-            function b() {
-                if (!bb) return
-                bb.disconnect()
-                d('connect')
+            function onLoad() {
+                if (!stomp) return
+                stomp.disconnect()
+                buttonText('connect')
             }
 
-            function c(a) {
-                const b = document.createElement('p')
-                b.textContent += a.a + ' | ' + a.b + ` (${a.c})\n`
-                document.querySelector('div').appendChild(b)
+            function addMessage(messageBundle) {
+                const paragraph = document.createElement('p')
+                paragraph.textContent += messageBundle.name + ' | ' + messageBundle.message + ` (${messageBundle.time})\n`
+                document.querySelector('div').appendChild(paragraph)
             }
 
-            function d(a) { cc[0].textContent = a }
+            function buttonText(text) { buttons[0].textContent = text }
 
-            function e() { bb.send(ds, {}, JSON
-                .stringify({a: fr, b: document.querySelector('input').value})) }
+            function send() { stomp.send(destinationIn, {}, JSON
+                .stringify({name: name, message: document.querySelector('input').value})) }
         </script>
     </head>
-    <body onload="b()">
-        <button onclick="a()">Connect</button>
+    <body onload="onLoad()">
+        <button onclick="connect()">Connect</button>
         <br/>
         <input type="text" placeholder="msg"/>
-        <button onclick="e()">Send</button>
+        <button onclick="send()">Send</button>
         <div></div>
     </body>
 </html>

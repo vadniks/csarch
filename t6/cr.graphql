@@ -1,29 +1,29 @@
 
 schema {
-    query: qr
-    mutation: mt
+    query: queryDescription
+    mutation: mutationDescription
 }
 
-type qr { # query
-    gtc(id: Int!): cr # get car
-    lsc: [cr] # list cars
-    lsb: [br] # list brands
+type queryDescription {
+    getCar(id: Int!): Car
+    listCars: [Car]
+    listBrands: [Brand]
 }
 
-type mt { # mutation
-    ddc(id: Int!, tl: String!, bd: Int!, pr: Int!, ag: Int!): cr # add car
-    ddb(id: Int!, nm: String!): br # add brand
+type mutationDescription {
+    addCar(id: Int!, title: String!, brand: Int!, price: Int!, age: Int!): Car
+    addBrand(id: Int!, name: String!): Brand
 }
 
-type cr { # car
+type Car {
     id: Int!
-    tl: String! # title
-    br: br! # brand by 'bd' (brand id)
-    pr: Int! # price
-    ag: Int! # age
+    title: String!
+    brand: Brand!
+    price: Int!
+    age: Int!
 }
 
-type br { # brand
+type Brand {
     id: Int!,
-    nm: String! # name
+    name: String!
 }
